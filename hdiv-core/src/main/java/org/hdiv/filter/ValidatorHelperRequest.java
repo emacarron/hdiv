@@ -654,6 +654,8 @@ public class ValidatorHelperRequest implements IValidationHelper {
 		try {
 
 			IState state = this.stateUtil.restoreState(requestState);
+			
+			HDIVUtil.setCurrentPage(state.getPageId(), request);
 
 			if (this.stateUtil.isMemoryStrategy(requestState)) {
 

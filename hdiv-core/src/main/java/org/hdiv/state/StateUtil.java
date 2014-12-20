@@ -18,6 +18,8 @@ package org.hdiv.state;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hdiv.config.HDIVConfig;
@@ -28,6 +30,7 @@ import org.hdiv.state.scope.StateScope;
 import org.hdiv.state.scope.StateScopeManager;
 import org.hdiv.util.EncodingUtil;
 import org.hdiv.util.HDIVErrorCodes;
+import org.hdiv.util.HDIVUtil;
 
 /**
  * Class containing utility methods for state.
@@ -170,7 +173,7 @@ public class StateUtil {
 		} catch (StringIndexOutOfBoundsException e) {
 			throw new HDIVException(HDIVErrorCodes.HDIV_PARAMETER_INCORRECT_VALUE, e);
 		}
-
+		
 		int stateId;
 		try {
 			stateId = Integer.parseInt(sId);
@@ -187,7 +190,7 @@ public class StateUtil {
 
 			restoredState = this.getStateFromSession(pageId, stateId);
 		}
-
+		
 		return restoredState;
 	}
 

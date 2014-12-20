@@ -29,6 +29,7 @@ import org.hdiv.application.IApplication;
 import org.hdiv.config.HDIVConfig;
 import org.hdiv.dataComposer.IDataComposer;
 import org.hdiv.exception.HDIVException;
+import org.hdiv.state.IPage;
 import org.hdiv.urlProcessor.FormUrlProcessor;
 import org.hdiv.urlProcessor.LinkUrlProcessor;
 import org.springframework.context.MessageSource;
@@ -58,6 +59,7 @@ public class HDIVUtil {
 	public static final String BASEURL_REQUEST_KEY = "BASEURL_REQUEST_KEY";
 	public static final String LINKURLPROCESSOR_SERVLETCONTEXT_KEY = "LINKURLPROCESSOR_SERVLETCONTEXT_KEY";
 	public static final String FORMURLPROCESSOR_SERVLETCONTEXT_KEY = "FORMURLPROCESSOR_SERVLETCONTEXT_KEY";
+	public static final String CURRENT_PAGE_KEY = "CURRENT_PAGE_KEY";
 
 	public static Pattern intPattern = Pattern.compile("[0-9]+");
 
@@ -510,4 +512,29 @@ public class HDIVUtil {
 		return u.toString();
 	}
 
+	/**
+   * Returns BaseURL value from <code>HttpServletRequest</code>
+   * 
+   * @param request
+   *            HttpServletRequest
+   * @return String
+   */
+  public static Integer getCurrentPage() {
+    HttpServletRequest request = getHttpServletRequest();
+    return (Integer) request.getAttribute(CURRENT_PAGE_KEY);
+  }
+
+  /**
+   * Set the BaseURL
+   * 
+   * @param baseURL
+   *            BaseURL to set
+   * @param request
+   *            {@link HttpServletRequest} object
+   */
+  public static void setCurrentPage(Integer pageId, HttpServletRequest request) {
+
+    request.setAttribute(CURRENT_PAGE_KEY, pageId);
+  }
+	
 }

@@ -131,14 +131,15 @@ public class SessionHDIV implements ISession, BeanFactoryAware {
 
 		IStateCache cache = this.getStateCache(session);
 
-		String removedPageId = cache.addPage(pageId);
+		int currentPage = HDIVUtil.getCurrentPage() == null? -1 :HDIVUtil.getCurrentPage(); 
+		List<Integer> removedPageIds = cache.addPage(pageId, String.valueOf(currentPage));
 
 		// if it returns a page identifier it is because the cache has reached
 		// the maximum size and therefore we must delete the page which has been
 		// stored for the longest time
-		if (removedPageId != null) {
+		if (removedPageIds != null) {
 
-			this.removePageFromSession(session, removedPageId);
+			this.removePageFromSession(session, removedPageIds);
 		}
 
 		// we update page identifier cache in session
@@ -159,35 +160,35 @@ public class SessionHDIV implements ISession, BeanFactoryAware {
 	 */
 	public void removeEndedPages(String conversationId) {
 
-		HttpSession session = this.getHttpSession();
-
-		IStateCache cache = this.getStateCache(session);
-		if (log.isDebugEnabled()) {
-			log.debug("Cache pages before finished pages are deleted:" + cache.toString());
-		}
-
-		List<String> pageIds = cache.getPageIds();
-
-		for (int i = 0; i < pageIds.size(); i++) {
-
-			String pageId = pageIds.get(i);
-			IPage currentPage = this.getPageFromSession(session, pageId);
-			if ((currentPage != null) && (currentPage.getFlowId() != null)) {
-
-				String pageFlowId = currentPage.getFlowId();
-
-				if (conversationId.equalsIgnoreCase(pageFlowId)) {
-
-					this.removePageFromSession(session, pageId);
-					pageIds.remove(i);
-					i--;
-				}
-			}
-		}
-
-		if (log.isDebugEnabled()) {
-			log.debug("Cache pages after finished pages are deleted:" + cache.toString());
-		}
+//		HttpSession session = this.getHttpSession();
+//
+//		IStateCache cache = this.getStateCache(session);
+//		if (log.isDebugEnabled()) {
+//			log.debug("Cache pages before finished pages are deleted:" + cache.toString());
+//		}
+//
+//		List<String> pageIds = cache.getPageIds();
+//
+//		for (int i = 0; i < pageIds.size(); i++) {
+//
+//			String pageId = pageIds.get(i);
+//			IPage currentPage = this.getPageFromSession(session, pageId);
+//			if ((currentPage != null) && (currentPage.getFlowId() != null)) {
+//
+//				String pageFlowId = currentPage.getFlowId();
+//
+//				if (conversationId.equalsIgnoreCase(pageFlowId)) {
+//
+//					this.removePageFromSession(session, pageId);
+//					pageIds.remove(i);
+//					i--;
+//				}
+//			}
+//		}
+//
+//		if (log.isDebugEnabled()) {
+//			log.debug("Cache pages after finished pages are deleted:" + cache.toString());
+//		}
 	}
 
 	/**
@@ -271,12 +272,14 @@ public class SessionHDIV implements ISession, BeanFactoryAware {
 	 *            page id to remove from session
 	 * @since HDIV 2.1.5
 	 */
-	protected void removePageFromSession(HttpSession session, String pageId) {
+	protected void removePageFromSession(HttpSession session, List<Integer> pageIds) {
 
-		session.removeAttribute(pageId);
+	  for (Integer pageId : pageIds) {
+	    session.removeAttribute(String.valueOf(pageId));
+	  }
 
 		if (log.isDebugEnabled()) {
-			log.debug("Deleted page with id:" + pageId);
+			log.debug("Deleted pages with ids:" + pageIds);
 		}
 	}
 
