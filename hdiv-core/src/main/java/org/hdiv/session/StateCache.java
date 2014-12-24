@@ -75,7 +75,7 @@ public class StateCache implements IStateCache {
 			this.pageIds.add(iKey);
 
 			if (log.isDebugEnabled()) {
-				log.debug("Page with [" + key + "] added to the cache.");
+				log.debug("Page with [" + key + "] added to the cache. Cache contains [" + pageIds + "]");
 			}
 
 			return removedKeys;
@@ -91,14 +91,12 @@ public class StateCache implements IStateCache {
   private List<Integer> cleanBuffer(Integer currentPageId) {
 
     ArrayList<Integer> removed = new ArrayList<Integer>();
+    
+    int totalPages = this.pageIds.size();
 
-    if (currentPageId > 0) {
-
-      for (int i = this.pageIds.size() - 1; i >= 0; i--) {
-        if (this.pageIds.get(i) > currentPageId) {
-          removed.add(this.pageIds.remove(i));
-        }
-      }
+    // Remove last page when we know that browser's forward history is empty (See issue #67)
+    if (currentPageId > 0 && totalPages > 2 && currentPageId == pageIds.get(totalPages - 2)) {
+      removed.add(this.pageIds.remove(totalPages - 1));
     }
     
     if (this.pageIds.size() >= this.maxSize) {
@@ -106,7 +104,7 @@ public class StateCache implements IStateCache {
     }
     
     if (log.isDebugEnabled()) {
-        log.debug("Full Cache, deleted page with id [" + removed + "].");
+        log.debug("Deleted pages with id [" + removed + "].");
     }
     return removed;
 	}
