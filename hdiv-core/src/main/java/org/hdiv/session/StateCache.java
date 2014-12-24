@@ -95,7 +95,7 @@ public class StateCache implements IStateCache {
     int totalPages = this.pageIds.size();
 
     // Remove last page when we know that browser's forward history is empty (See issue #67)
-    if (currentPageId > 0 && totalPages > 2 && currentPageId == pageIds.get(totalPages - 2)) {
+    if (currentPageId > 0 && totalPages > 1 && currentPageId == pageIds.get(totalPages - 2)) {
       removed.add(this.pageIds.remove(totalPages - 1));
     }
     
